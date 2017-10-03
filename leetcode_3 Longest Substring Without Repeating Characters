@@ -1,0 +1,62 @@
+/**
+ * 最长无重复字串求法
+ *  核心思想
+ *    1 运用Hashmap存储字符串的字符和相应index
+ *    2 遍历字符串分别找出最长串的start、end位置
+ *  时间复杂度：O（N）N为字符串的长度
+ *  空间复杂度：字符串长度的Hashmap
+ */
+ 
+ 
+ /*
+  * java Version1 time:58ms
+  */
+ class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int start = 0, end = 0;
+        int max = 0;
+        Map<Character, Integer> map = new HashMap<>((int)((float)s.length() / 0.75F + 1.0F));
+        for (; end < s.length(); end++) {
+            if(map.containsKey(s.charAt(end))) 
+                start = Math.max(start, map.get(s.charAt(end)) + 1);
+            map.put(s.charAt(end), end);
+            max = Math.max(max, end - start + 1);
+        }
+        return max;
+    }
+}
+
+/*
+ * java Version2 time:46ms
+ * 思想：运用字符的ASICII码存储字符
+ */
+ class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int[] asiciiAr = new int[128];
+        char[] strAr = s.toCharArray();
+        int i = 0, j = 0;
+        int nMax = 0;
+        for(; j < strAr.length; j++){
+            if(asiciiAr[strAr[j]] > 0)
+                i = Math.max(i, asiciiAr[strAr[j]]);
+            asiciiAr[strAr[j]] = j + 1;          //+1是为了特殊处理strAr[j] = 0 的情况，即避免asicii数组值为0的情况
+            nMax = Math.max(nMax, j - i + 1);
+        }
+        return nMax;
+    }
+}
+
+/*
+ * python Version1 time:89 ms
+ * 思想：运用Python字典存储字符串
+ */
+ class Solution(object):
+    def lengthOfLongestSubstring(self, s):
+        i = maxLen = 0
+        dic = {}
+        for j in range(len(s)):
+            if s[j] in dic:
+                i = max(i, dic[s[j]] + 1)
+            dic[s[j]] = j
+            maxLen = max(maxLen, j - i + 1)
+        return maxLen
